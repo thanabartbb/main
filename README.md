@@ -33,7 +33,8 @@ Every tool returns human-readable text plus `structuredContent` JSON.
 ### Run it on Termux (Android)
 
 ```bash
-pkg update && pkg install nodejs git
+pkg update && pkg install git
+node --version || pkg install nodejs-lts   # nodejs-lts or nodejs both work; keep whichever you have
 git clone https://github.com/thanabartbb/main.git ~/agents-ai-nextjs-bridge
 cd ~/agents-ai-nextjs-bridge
 npm test                 # MCP handshake + tool calls, no install needed

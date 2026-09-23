@@ -109,8 +109,8 @@ async function doctor({ cwd } = {}) {
 
   const checks = [
     { domain: 'toolchain', name: 'node', required: true, ok: nodeMajor >= 18, detail: node || process.version, note: 'need >= 18' },
-    { domain: 'toolchain', name: 'npm', required: true, ok: Boolean(npm), detail: npm, note: termux ? 'pkg install nodejs' : 'required' },
-    { domain: 'toolchain', name: 'npx', required: true, ok: Boolean(npx), detail: npx, note: termux ? 'pkg install nodejs' : 'required' },
+    { domain: 'toolchain', name: 'npm', required: true, ok: Boolean(npm), detail: npm, note: termux ? 'pkg install nodejs-lts (or nodejs)' : 'required' },
+    { domain: 'toolchain', name: 'npx', required: true, ok: Boolean(npx), detail: npx, note: termux ? 'pkg install nodejs-lts (or nodejs)' : 'required' },
     { domain: 'toolchain', name: 'bun', required: false, ok: Boolean(bun), detail: bun, note: termux ? 'optional; Bun has no official Android build' : 'optional' },
     { domain: 'local', name: 'git', required: true, ok: Boolean(git), detail: git, note: termux ? 'pkg install git' : 'required' },
     { domain: 'local', name: 'cwd-write', required: true, ok: canWrite, detail: dir, note: termux && dir.startsWith('/storage') ? 'run termux-setup-storage, or work under $HOME' : 'need write access' },
