@@ -1,0 +1,8 @@
+{
+  "name": "isuper-agent-sdk-web",
+  "private": true,
+  "scripts": {
+    "dev": "npx wrangler dev",
+    "deploy": "npx wrangler deploy"
+  }
+}

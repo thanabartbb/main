@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "isuper-agent-sdk",
+  "compatibility_date": "2026-09-01",
+  // Static site only: Cloudflare serves ./public, no Worker script.
+  // /login -> login.html via the default html_handling.
+  "assets": {
+    "directory": "./public"
+  }
+}
