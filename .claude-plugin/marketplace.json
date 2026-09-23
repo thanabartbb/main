@@ -1,0 +1,13 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "agents-ai-nextjs-bridge-marketplace",
+  "owner": { "name": "THNB / SMK" },
+  "plugins": [
+    {
+      "name": "agents-ai-nextjs-bridge",
+      "source": "./",
+      "description": "Routing bridge for Vercel/Next.js agent operations across the canonical Vercel plugin, Remote Desktop Commander, and Remote SDK-dev.",
+      "version": "0.2.0"
+    }
+  ]
+}

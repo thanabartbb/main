@@ -1,0 +1,13 @@
+{
+  "name": "agents-ai-nextjs-bridge",
+  "version": "0.2.0",
+  "description": "MCP server + Claude Code plugin that routes Vercel/Next.js agent work; runs on Termux with zero dependencies.",
+  "type": "module",
+  "bin": { "agents-ai-nextjs-bridge-mcp": "server/index.mjs" },
+  "scripts": {
+    "start": "node server/index.mjs",
+    "test": "node --test test/server.test.mjs"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}
