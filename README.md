@@ -60,6 +60,13 @@ For any other client, the generic config is:
 }
 ```
 
+> **Claude Code does not run natively on Termux.** Its npm package ships no
+> `linux-arm64-android` binary (`claude --version` fails with "native binary
+> not installed"). The MCP server itself works on Termux — verified on
+> android/arm64, Termux 0.119.0-beta.3, Node v24.18.0. To use it from Claude
+> Code, either run Claude Code inside `proot-distro` Ubuntu (untested), or use
+> another MCP client that runs on Android.
+
 Termux notes: Bun has no official Android build, so `bun` shows as `absent`
 (it is optional). To work on files in shared storage, run `termux-setup-storage`
 first; otherwise keep projects under `$HOME`.
@@ -121,7 +128,8 @@ sh scripts/doctor.sh
 
 ## Current state
 
-- MCP server: `server/index.mjs` (stdio, zero dependencies, Termux-ready), tested with `npm test`.
+- MCP server: `server/index.mjs` (stdio, zero dependencies), `doctor` verified on a real Termux device.
+- Claude Code on Termux: not available natively (no Android binary); proot-distro route not yet tried.
 - Remote SDK-dev skill: `agents-ai-nextjs-bridge` created.
 - Remote Desktop Commander: pending until an authorized device is online.
 - No secrets are stored in this package.
