@@ -4,7 +4,26 @@
   "displayName": "Agents AI Next.js Bridge",
   "version": "0.2.0",
   "description": "Routes Vercel/Next.js agent work across the canonical Vercel plugin, Remote Desktop Commander, and Remote SDK-dev without overlapping tool responsibilities.",
-  "author": { "name": "THNB / SMK" },
+  "author": {
+    "name": "THNB / SMK"
+  },
   "license": "MIT",
-  "keywords": ["termux", "nextjs", "vercel", "ai-sdk", "remote-desktop-commander", "zapier", "mcp", "agent-routing"]
+  "keywords": [
+    "termux",
+    "nextjs",
+    "vercel",
+    "ai-sdk",
+    "remote-desktop-commander",
+    "zapier",
+    "mcp",
+    "agent-routing"
+  ],
+  "mcpServers": {
+    "agents-ai-nextjs-bridge": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/server/index.mjs"
+      ]
+    }
+  }
 }

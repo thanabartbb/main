@@ -71,7 +71,7 @@ Termux notes: Bun has no official Android build, so `bun` shows as `absent`
 (it is optional). To work on files in shared storage, run `termux-setup-storage`
 first; otherwise keep projects under `$HOME`.
 
-When installed as a Claude Code plugin (below), `.mcp.json` starts the server
+When installed as a Claude Code plugin (below), `mcpServers` in `.claude-plugin/plugin.json` starts the server
 automatically — no `claude mcp add` needed.
 
 ## Install (Claude Code)
