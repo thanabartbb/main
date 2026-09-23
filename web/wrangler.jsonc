@@ -2,9 +2,14 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "isuper-agent-sdk",
   "compatibility_date": "2026-09-01",
-  // Static site only: Cloudflare serves ./public, no Worker script.
-  // /login -> login.html via the default html_handling.
+  // The Worker only handles /api/* (live news feeds). Every other path is
+  // served straight from ./public; /login -> login.html.
+  "main": "src/worker.js",
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
   }
+  // Optional: `npx wrangler secret put GITHUB_TOKEN` (read-only public token)
+  // raises the GitHub rate limit for the Community tab.
 }

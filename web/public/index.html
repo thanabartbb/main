@@ -133,58 +133,105 @@
       color: #fff;
     }
 
-    .news-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Tabs — สลับแหล่งข่าว */
+    .news-tabs {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      border-bottom: 1px solid #2c2c2e;
+    }
+
+    .news-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .news-tab {
+      flex: none;
+      padding: 12px 14px;
+      margin-bottom: -1px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #8e8e93;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .news-tab:hover {
+      color: #fff;
+    }
+
+    .news-tab[aria-selected="true"] {
+      color: #fff;
+      border-bottom-color: #fff;
+    }
+
+    .news-tab:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: -2px;
+    }
+
+    /* Live status */
+    .news-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 0;
+      color: #8e8e93;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #30d158;
+      box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.6);
+      animation: live-pulse 2s infinite;
+    }
+
+    .news-status.is-error .live-dot {
+      background: #ff453a;
+      animation: none;
+    }
+
+    @keyframes live-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.5); }
+      70% { box-shadow: 0 0 0 7px rgba(48, 209, 88, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0); }
+    }
+
+    /* กรอบเส้นแบบ grid */
+    .news-frame {
       border-top: 1px solid #2c2c2e;
       border-left: 1px solid #2c2c2e;
     }
 
-    .news-card {
-      min-height: 190px;
-      padding: 24px;
+    /* News list */
+    .news-row {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: space-between;
-      gap: 36px;
+      gap: 20px;
+      padding: 22px 24px;
       color: inherit;
       text-decoration: none;
-      background: #000;
       border-right: 1px solid #2c2c2e;
       border-bottom: 1px solid #2c2c2e;
       transition: background-color 0.2s ease;
     }
 
-    .news-card:hover {
+    .news-row:hover {
       background: #0a0a0a;
     }
 
-    .news-source {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: #8e8e93;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .news-arrow {
-      color: #636366;
-      font-size: 16px;
-      line-height: 1;
-      transition: transform 0.2s ease, color 0.2s ease;
-    }
-
-    .news-card:hover .news-arrow {
-      color: #fff;
-      transform: translate(2px, -2px);
-    }
-
-    .news-card h3 {
-      margin-bottom: 9px;
+    .news-row h3 {
       color: #fff;
       font-size: 18px;
       line-height: 1.35;
@@ -192,10 +239,164 @@
       letter-spacing: -0.01em;
     }
 
-    .news-card p {
+    .news-meta {
+      margin-top: 8px;
+      color: #8e8e93;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+    }
+
+    .news-meta b {
+      color: #c7c7cc;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .news-chevron {
+      flex: none;
+      width: 18px;
+      height: 18px;
+      color: #636366;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .news-row:hover .news-chevron,
+    .repo-card:hover .news-chevron {
+      color: #fff;
+      transform: translateX(2px);
+    }
+
+    /* Community repos — 2 คอลัมน์ */
+    .repo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .repo-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 150px;
+      padding: 24px;
+      color: inherit;
+      text-decoration: none;
+      border-right: 1px solid #2c2c2e;
+      border-bottom: 1px solid #2c2c2e;
+      transition: background-color 0.2s ease;
+    }
+
+    .repo-card:hover {
+      background: #0a0a0a;
+    }
+
+    .repo-card h3 {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      overflow-wrap: anywhere;
+    }
+
+    .repo-path {
+      color: #a1a1a6;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .repo-card .news-meta {
+      margin-top: auto;
+    }
+
+    /* แถบเส้นตกแต่งท้าย grid */
+    .news-ruler {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      height: 48px;
+      border-left: 1px solid #2c2c2e;
+    }
+
+    .news-ruler span {
+      border-right: 1px solid #2c2c2e;
+      border-bottom: 1px solid #2c2c2e;
+    }
+
+    .news-ruler::after {
+      content: "+";
+      position: absolute;
+      right: -7px;
+      bottom: -11px;
+      color: #8e8e93;
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    /* Loading / empty / error */
+    .news-skeleton {
+      padding: 22px 24px;
+      border-right: 1px solid #2c2c2e;
+      border-bottom: 1px solid #2c2c2e;
+    }
+
+    .news-skeleton i {
+      display: block;
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #111 0%, #1c1c1e 50%, #111 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+
+    .news-skeleton i + i {
+      width: 40%;
+      height: 10px;
+      margin-top: 12px;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to { background-position: -200% 0; }
+    }
+
+    .news-empty {
+      padding: 32px 24px;
       color: #a1a1a6;
       font-size: 14px;
       line-height: 1.6;
+      border-right: 1px solid #2c2c2e;
+      border-bottom: 1px solid #2c2c2e;
+    }
+
+    .news-empty button {
+      margin-top: 12px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: #1c1c1e;
+      border: 1px solid #38383a;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .is-new {
+      animation: arrive 2.4s ease;
+    }
+
+    @keyframes arrive {
+      from { background: #1c1c1e; }
+      to { background: transparent; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .live-dot, .news-skeleton i, .is-new { animation: none; }
     }
 
     @media (max-width: 640px) {
@@ -210,13 +411,21 @@
         gap: 10px;
       }
 
-      .news-grid {
-        grid-template-columns: 1fr;
+      .news-row {
+        padding: 20px 18px;
       }
 
-      .news-card {
-        min-height: 168px;
-        padding: 22px 18px;
+      .repo-card {
+        min-height: 140px;
+        padding: 20px 16px;
+      }
+
+      .repo-card h3 {
+        font-size: 16px;
+      }
+
+      .repo-path {
+        font-size: 13px;
       }
     }
 
@@ -264,74 +473,162 @@
       <a class="news-all" href="/news">View all →</a>
     </div>
 
-    <div class="news-grid">
-      <a class="news-card" href="/news?source=openai" data-feed="openai">
-        <div class="news-source">
-          <span>OpenAI</span>
-          <span class="news-arrow" aria-hidden="true">↗</span>
-        </div>
-        <div>
-          <h3>OpenAI updates</h3>
-          <p>Models, API, developer tools and platform updates.</p>
-        </div>
-      </a>
-
-      <a class="news-card" href="/news?source=anthropic" data-feed="anthropic">
-        <div class="news-source">
-          <span>Anthropic</span>
-          <span class="news-arrow" aria-hidden="true">↗</span>
-        </div>
-        <div>
-          <h3>Anthropic updates</h3>
-          <p>Research, platform releases and developer announcements.</p>
-        </div>
-      </a>
-
-      <a class="news-card" href="/news?source=claude" data-feed="claude">
-        <div class="news-source">
-          <span>Claude</span>
-          <span class="news-arrow" aria-hidden="true">↗</span>
-        </div>
-        <div>
-          <h3>Claude releases</h3>
-          <p>Model, product and tooling changes across the Claude ecosystem.</p>
-        </div>
-      </a>
-
-      <a class="news-card" href="/news?source=grok" data-feed="grok">
-        <div class="news-source">
-          <span>Grok</span>
-          <span class="news-arrow" aria-hidden="true">↗</span>
-        </div>
-        <div>
-          <h3>Grok updates</h3>
-          <p>Model releases, capabilities and developer platform news.</p>
-        </div>
-      </a>
-
-      <a class="news-card" href="/news?source=ai" data-feed="ai">
-        <div class="news-source">
-          <span>AI News</span>
-          <span class="news-arrow" aria-hidden="true">↗</span>
-        </div>
-        <div>
-          <h3>AI ecosystem</h3>
-          <p>Important releases and changes across the wider AI ecosystem.</p>
-        </div>
-      </a>
-
-      <a class="news-card" href="/community" data-feed="community">
-        <div class="news-source">
-          <span>Community</span>
-          <span class="news-arrow" aria-hidden="true">↗</span>
-        </div>
-        <div>
-          <h3>From the community</h3>
-          <p>Build logs, experiments, fixes and reusable workflows from builders.</p>
-        </div>
-      </a>
+    <div class="news-tabs" role="tablist" aria-label="News sources">
+      <button class="news-tab" role="tab" data-source="all">All</button>
+      <button class="news-tab" role="tab" data-source="openai">OpenAI</button>
+      <button class="news-tab" role="tab" data-source="anthropic">Anthropic</button>
+      <button class="news-tab" role="tab" data-source="claude">Claude</button>
+      <button class="news-tab" role="tab" data-source="grok">Grok</button>
+      <button class="news-tab" role="tab" data-source="ai">AI News</button>
+      <button class="news-tab" role="tab" data-source="community">Community</button>
     </div>
+
+    <p class="news-status" aria-live="polite"><span class="live-dot" aria-hidden="true"></span><span id="news-status-text">Connecting…</span></p>
+
+    <div id="news-panel" role="tabpanel" aria-busy="true"></div>
   </section>
 
+  <script>
+    // Live News & Community: ดึงจาก /api/feed (Cloudflare Worker) ทุก 60 วินาที
+    (function () {
+      var REFRESH_MS = 60000;
+      var LABELS = { openai: 'OpenAI', anthropic: 'Anthropic', claude: 'Claude', grok: 'Grok', ai: 'AI News', community: 'Community' };
+      var CHEVRON = '<svg class="news-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.news-tab'));
+      var panel = document.getElementById('news-panel');
+      var status = document.querySelector('.news-status');
+      var statusText = document.getElementById('news-status-text');
+      var cache = {};
+      var seen = {};
+      var current = 'all';
+      var timer = null;
+
+      function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+
+      function ago(ms) {
+        var s = Math.max(0, Math.round((Date.now() - ms) / 1000));
+        if (s < 60) return s + 's ago';
+        if (s < 3600) return Math.floor(s / 60) + 'm ago';
+        if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+        return Math.floor(s / 86400) + 'd ago';
+      }
+
+      function stars(n) {
+        return n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k' : String(n);
+      }
+
+      var RULER = '<div class="news-ruler" aria-hidden="true">' + new Array(9).join('<span></span>') + '</div>';
+
+      function renderSkeleton() {
+        var rows = '';
+        for (var i = 0; i < 4; i++) rows += '<div class="news-skeleton"><i></i><i></i></div>';
+        panel.innerHTML = '<div class="news-frame">' + rows + '</div>';
+      }
+
+      function renderError(msg) {
+        panel.innerHTML = '<div class="news-frame"><div class="news-empty">' + esc(msg) +
+          '<br><button type="button" data-retry>Try again</button></div></div>' + RULER;
+      }
+
+      function render(source, data) {
+        var old = seen[source] || null;
+        var fresh = {};
+        var html;
+        if (!data.items.length) {
+          renderError(data.errors && data.errors.length ? 'This feed is unavailable right now. It will retry automatically.' : 'Nothing new yet.');
+          return;
+        }
+        if (source === 'community') {
+          html = '<div class="news-frame repo-grid">' + data.items.map(function (r) {
+            fresh[r.url] = 1;
+            var parts = String(r.repo).split('/');
+            return '<a class="repo-card' + (old && !old[r.url] ? ' is-new' : '') + '" href="' + esc(r.url) + '" target="_blank" rel="noopener">' +
+              '<h3>' + esc(r.title) + '</h3>' +
+              '<span class="repo-path">' + esc(parts[0]) + '/<br>' + esc(parts.slice(1).join('/')) + '</span>' +
+              '<span class="news-meta">★ ' + stars(r.stars) + (r.meta ? ' · ' + esc(r.meta) : '') + '</span></a>';
+          }).join('') + (data.items.length % 2 ? '<div class="repo-card" aria-hidden="true"></div>' : '') + '</div>';
+        } else {
+          html = '<div class="news-frame">' + data.items.map(function (n) {
+            fresh[n.url] = 1;
+            return '<a class="news-row' + (old && !old[n.url] ? ' is-new' : '') + '" href="' + esc(n.url) + '" target="_blank" rel="noopener"><div>' +
+              '<h3>' + esc(n.title) + '</h3>' +
+              '<p class="news-meta"><b>' + esc(LABELS[n.source] || n.source) + '</b> · ' + ago(n.time) + (n.meta ? ' · ' + esc(n.meta) : '') + '</p>' +
+              '</div>' + CHEVRON + '</a>';
+          }).join('') + '</div>';
+        }
+        seen[source] = fresh;
+        panel.innerHTML = html + RULER;
+      }
+
+      function updateStatus() {
+        var data = cache[current];
+        status.classList.toggle('is-error', !!(data && data.failed));
+        if (!data) { statusText.textContent = 'Connecting…'; return; }
+        if (data.failed) { statusText.textContent = 'Offline · retrying every 60s'; return; }
+        statusText.textContent = 'Live · updated ' + ago(data.fetchedAt);
+      }
+
+      function load(source) {
+        if (!cache[source]) renderSkeleton();
+        panel.setAttribute('aria-busy', 'true');
+        return fetch('/api/feed?source=' + encodeURIComponent(source))
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            if (!data.items) throw new Error(data.error || 'bad response');
+            cache[source] = data;
+            if (source === current) render(source, data);
+          })
+          .catch(function () {
+            if (cache[source] && !cache[source].failed) return;
+            cache[source] = { failed: true, items: [] };
+            if (source === current) renderError('Couldn’t load this feed right now. It will retry automatically.');
+          })
+          .then(function () {
+            if (source === current) { panel.setAttribute('aria-busy', 'false'); updateStatus(); }
+          });
+      }
+
+      function select(source) {
+        current = source;
+        tabs.forEach(function (t) {
+          var on = t.getAttribute('data-source') === source;
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.tabIndex = on ? 0 : -1;
+        });
+        try { localStorage.setItem('news-tab', source); } catch (e) {}
+        if (cache[source] && !cache[source].failed) render(source, cache[source]);
+        updateStatus();
+        load(source);
+        clearInterval(timer);
+        timer = setInterval(function () { if (!document.hidden) load(current); }, REFRESH_MS);
+      }
+
+      tabs.forEach(function (t, i) {
+        t.addEventListener('click', function () { select(t.getAttribute('data-source')); });
+        t.addEventListener('keydown', function (e) {
+          var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+          if (!d) return;
+          var next = tabs[(i + d + tabs.length) % tabs.length];
+          next.focus();
+          select(next.getAttribute('data-source'));
+        });
+      });
+
+      panel.addEventListener('click', function (e) {
+        if (e.target.hasAttribute('data-retry')) { delete cache[current]; load(current); }
+      });
+
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) load(current); });
+      setInterval(updateStatus, 5000);
+
+      var saved = null;
+      try { saved = localStorage.getItem('news-tab'); } catch (e) {}
+      select(saved && LABELS[saved] || saved === 'all' ? saved : 'all');
+    })();
+  </script>
 </body>
 </html>
