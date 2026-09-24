@@ -68,7 +68,7 @@ If a method isn't set up, the page says so instead of sending people to a broken
 provider. ChatGPT, SAML SSO and Passkey show "not available yet". Sign Up
 explains that the account is created the first time someone signs in.
 
-Setup (replace `<your-domain>` with the deployed host, e.g. `xxx.workers.dev`):
+Setup (replace `<your-domain>` with the deployed host, e.g. `basaawclaude.thanabartbb.workers.dev`):
 
 1. `SESSION_SECRET`: `openssl rand -base64 32`, then `npx wrangler secret put SESSION_SECRET`.
    Changing it signs everyone out.

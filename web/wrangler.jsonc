@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "isuper-agent-sdk",
+  "name": "basaawclaude",
   "compatibility_date": "2026-09-01",
   // The Worker only handles /api/* (live news feeds). Every other path is
   // served straight from ./public; /login -> login.html.
