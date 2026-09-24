@@ -1,6 +1,6 @@
 # Isuper agent - SDK (web)
 
-Cloudflare Worker + static assets. The Worker only answers `/api/feed`;
+Cloudflare Worker + static assets. The Worker only answers `/api/feed` and `/api/auth/*`;
 everything else is served from `public/`.
 
 | URL      | File                | Source                                  |
@@ -53,9 +53,41 @@ change is asked for, and keep each change as small as the request.
 
 Manual deploy from a machine with a Cloudflare login: `cd web && npx wrangler deploy`.
 
+## Sign-in (`/login`)
+
+`src/auth.js`. There's no database: the session is a signed cookie
+(HMAC-SHA256, `HttpOnly; Secure; SameSite=Lax`, 30 days).
+
+| Button              | Works when these secrets are set                                  |
+| ------------------- | ----------------------------------------------------------------- |
+| Continue with GitHub | `SESSION_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`     |
+| Continue with Google | `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`     |
+| Continue with Email  | `SESSION_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM` (15-minute magic link) |
+
+If a method isn't set up, the page says so instead of sending people to a broken
+provider. ChatGPT, SAML SSO and Passkey show "not available yet". Sign Up
+explains that the account is created the first time someone signs in.
+
+Setup (replace `<your-domain>` with the deployed host, e.g. `xxx.workers.dev`):
+
+1. `SESSION_SECRET`: `openssl rand -base64 32`, then `npx wrangler secret put SESSION_SECRET`.
+   Changing it signs everyone out.
+2. GitHub: github.com → Settings → Developer settings → OAuth Apps → New.
+   Callback URL: `https://<your-domain>/api/auth/callback/github`.
+3. Google: console.cloud.google.com → APIs & Services → Credentials → OAuth client ID
+   (Web application). Authorized redirect URI:
+   `https://<your-domain>/api/auth/callback/google`.
+4. Email (optional): a resend.com API key, plus a sender on a domain verified in
+   Resend, e.g. `EMAIL_FROM="Isuper <login@yourdomain.com>"`.
+
+Put each value in with `npx wrangler secret put NAME`, or in the dashboard under
+Settings → Variables and Secrets (type: Secret). For `npx wrangler dev`, put them
+in `web/.dev.vars` (git-ignored).
+
+API: `GET /api/auth/me` returns `{user}`, or 401 when signed out.
+`POST /api/auth/logout` signs out.
+
 ## Not wired yet
 
-"View all →" links to `/news`, which does not exist yet (404). Sign-in buttons (Email, GitHub, Google, ChatGPT, SAML SSO, Passkey, Sign Up,
-Show other options) are still the original `alert()` placeholders, and
-"ติดต่อฝ่ายขาย" has no target. Real sign-in needs a backend and an OAuth app
-per provider.
+"View all →" links to `/news`, which does not exist yet (404). ChatGPT, SAML SSO
+and Passkey sign-in aren't built. "ติดต่อฝ่ายขาย" has no target.

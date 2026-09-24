@@ -5,6 +5,6 @@
   "scripts": {
     "dev": "npx wrangler dev",
     "deploy": "npx wrangler deploy",
-    "test": "node --test test/feeds.test.mjs"
+    "test": "node --test test/feeds.test.mjs test/auth.test.mjs"
   }
 }

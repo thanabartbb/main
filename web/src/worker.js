@@ -1,9 +1,13 @@
 import { getFeed, SOURCES } from './feeds.js';
+import { handleAuth } from './auth.js';
 
 // Everything except /api/* is served straight from ./public (see wrangler.jsonc).
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    const auth = await handleAuth(request, env);
+    if (auth) return auth;
 
     if (url.pathname === '/api/feed') {
       const source = url.searchParams.get('source') || 'all';
