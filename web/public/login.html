@@ -238,6 +238,43 @@
       text-decoration: underline;
     }
 
+    [hidden] { display: none !important; }
+
+    #sign-in {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .auth-msg {
+      width: 100%;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .auth-msg.error { color: #f87171; }
+
+    .signed-in {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .signed-in img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+    }
+
+    .signed-in .who { font-size: 0.95rem; color: var(--text-muted); }
+    .signed-in .who strong { color: var(--text); }
+
     /* Subtle focus ring for keyboard */
     .btn-primary:focus-visible,
     .btn-provider:focus-visible,
@@ -264,6 +301,16 @@
 
     <h1 class="brand">Isuper agent - <span class="sdk">sdk</span></h1>
 
+    <p id="auth-msg" class="auth-msg" role="status" hidden></p>
+
+    <div id="signed-in" class="signed-in" hidden>
+      <img id="user-avatar" alt="" hidden />
+      <p class="who">Signed in as <strong id="user-name"></strong></p>
+      <button type="button" class="btn-primary" onclick="location.href='/'">Go to home</button>
+      <button type="button" class="more-options" onclick="logout()">Sign out</button>
+    </div>
+
+    <div id="sign-in">
     <form id="login-form" onsubmit="return handleEmail(event)">
       <div class="field">
         <input
@@ -343,31 +390,100 @@
       Don't have an account?
       <a href="#" onclick="signup(event)">Sign Up</a>
     </p>
+    </div>
   </main>
 
   <script>
-    function handleEmail(e) {
+    const ERRORS = {
+      not_configured: 'This sign-in method is not set up on the server yet.',
+      cancelled: 'Sign-in was cancelled.',
+      bad_state: 'Sign-in expired or was started in another tab. Please try again.',
+      link_expired: 'That sign-in link is invalid or has expired. Request a new one.',
+      failed: 'Sign-in failed. Please try again.',
+    };
+    let available = {};
+
+    function say(text, isError) {
+      const el = document.getElementById('auth-msg');
+      el.textContent = text;
+      el.className = 'auth-msg' + (isError ? ' error' : '');
+      el.hidden = !text;
+    }
+
+    async function handleEmail(e) {
       e.preventDefault();
       const email = document.getElementById('email').value.trim();
       if (!email) return false;
-      // Placeholder — ต่อ backend / auth จริงตอนโฮสต์
-      alert('Continue with Email: ' + email);
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.disabled = true;
+      say('Sending sign-in link…');
+      try {
+        const res = await fetch('/api/auth/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) say('Check ' + email + ' for a sign-in link. It expires in 15 minutes.');
+        else if (data.error === 'invalid_email') say('Please enter a valid email address.', true);
+        else if (data.error === 'not_configured') say('Email sign-in is not set up yet. Use GitHub or Google.', true);
+        else say('Could not send the email. Please try again.', true);
+      } catch {
+        say('Network error. Please try again.', true);
+      } finally {
+        btn.disabled = false;
+      }
       return false;
     }
 
     function provider(name) {
-      // Placeholder — ต่อ OAuth / SSO จริงตอนโฮสต์
-      alert('Continue with ' + name);
+      if (name === 'github' || name === 'google') {
+        if (available[name] === false) return say(ERRORS.not_configured, true);
+        location.href = '/api/auth/login/' + name;
+        return;
+      }
+      const label = { chatgpt: 'ChatGPT', saml: 'SAML SSO', passkey: 'Passkey' }[name] || name;
+      say(label + ' sign-in is not available yet. Use GitHub, Google or email.', true);
     }
 
     function showMore() {
-      alert('Show other options');
+      say('No other sign-in options yet.');
     }
 
     function signup(e) {
       e.preventDefault();
-      alert('Sign Up');
+      say('No separate sign-up: your account is created the first time you sign in.');
     }
+
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+      location.replace('/login');
+    }
+
+    (async function init() {
+      const params = new URLSearchParams(location.search);
+      const err = params.get('error');
+      if (err) say(ERRORS[err] || ERRORS.failed, true);
+      if (params.has('error') || params.has('signed_in')) history.replaceState(null, '', '/login');
+
+      try {
+        const me = await fetch('/api/auth/me').then((r) => r.json());
+        if (me.user) {
+          document.getElementById('sign-in').hidden = true;
+          document.getElementById('user-name').textContent = me.user.name || me.user.email || 'you';
+          if (me.user.avatar) {
+            const img = document.getElementById('user-avatar');
+            img.src = me.user.avatar;
+            img.hidden = false;
+          }
+          document.getElementById('signed-in').hidden = false;
+          return;
+        }
+      } catch {}
+      try {
+        available = await fetch('/api/auth/providers').then((r) => r.json());
+      } catch {}
+    })();
   </script>
 </body>
 </html>
