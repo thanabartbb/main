@@ -1,0 +1,42 @@
+{
+  "name": "agents-ai-nextjs-bridge",
+  "version": "0.3.0",
+  "description": "Routes Next.js agent work and adds live web search, page reading, and research through Exa.",
+  "author": {
+    "name": "THNB / SMK",
+    "url": "https://github.com/thanabartbb"
+  },
+  "homepage": "https://github.com/thanabartbb/main",
+  "repository": "https://github.com/thanabartbb/main",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "exa",
+    "mcp",
+    "nextjs",
+    "vercel",
+    "web-search",
+    "research"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Agents AI + Exa",
+    "shortDescription": "Next.js agent routing with live Exa research",
+    "longDescription": "A Codex plugin for deterministic Vercel and Next.js workflows, with Exa MCP tools for current web search, page reading, and cited research.",
+    "developerName": "THNB / SMK",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Search",
+      "Research",
+      "Developer Tools"
+    ],
+    "websiteURL": "https://github.com/thanabartbb/main",
+    "defaultPrompt": [
+      "Search the latest docs before updating this project.",
+      "Research this issue and cite the primary sources.",
+      "Check our Next.js code against current guidance."
+    ],
+    "brandColor": "#101827"
+  }
+}
