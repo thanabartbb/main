@@ -12,7 +12,7 @@ import { homedir, platform, arch } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createInterface } from 'node:readline';
 
-const SERVER_INFO = { name: 'agents-ai-nextjs-bridge', version: '0.2.0' };
+const SERVER_INFO = { name: 'agents-ai-nextjs-bridge', version: '0.3.0' };
 const PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 const VERCEL_PLUGIN = 'vercel/vercel-plugin';
 
