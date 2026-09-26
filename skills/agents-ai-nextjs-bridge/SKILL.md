@@ -1,6 +1,6 @@
 ---
 name: agents-ai-nextjs-bridge
-description: Route Vercel and Next.js work between the official Vercel plugin, Remote Desktop Commander, and Remote SDK-dev. Use for setup, diagnosis, deployment preparation, local shell/file work, or authenticated SaaS actions.
+description: Route Vercel and Next.js work between the official Vercel plugin, Exa web research, Remote Desktop Commander, and Remote SDK-dev. Use for setup, diagnosis, current documentation, deployment preparation, local shell/file work, or authenticated SaaS actions.
 metadata:
   priority: 8
   docs:
@@ -12,6 +12,7 @@ metadata:
       - "remote desktop commander"
       - "remote sdk-dev"
       - "next.js agent"
+      - "exa web research"
 ---
 # Agents AI Next.js Bridge
 
@@ -19,6 +20,7 @@ Use the canonical Vercel plugin for Vercel/Next.js/AI SDK knowledge. Do not main
 
 ## Routing contract
 - Vercel/Next.js/AI SDK context and specialist guidance -> official `vercel/vercel-plugin`.
+- Current documentation, changelogs, issues, examples, and multi-source web research -> Exa MCP.
 - Local files, terminal commands, package installs, git, tests, and processes -> Remote Desktop Commander.
 - Authenticated SaaS/OAuth actions -> Remote SDK-dev / Zapier MCP.
 - Readiness checks and installing the Vercel plugin -> this plugin's own

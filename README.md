@@ -1,10 +1,32 @@
-# Agents AI Next.js Bridge
+# Agents AI Next.js + Exa Bridge
 
-A thin routing plugin for keeping Vercel/Next.js agent work deterministic across three tool domains:
+A thin routing plugin for keeping Vercel/Next.js agent work deterministic across four tool domains:
 
 - **Official Vercel Plugin** — current Vercel, Next.js, AI SDK, deployment, performance, and architecture knowledge.
 - **Remote Desktop Commander** — local filesystem, terminal, process, package, git, and test execution on an authorized device.
 - **Remote SDK-dev** — authenticated SaaS/OAuth actions through Zapier MCP.
+- **Exa** — live web search, page reading, and multi-source research in Codex.
+
+## Install in Codex
+
+The repository is a Codex plugin as well as a Claude Code plugin. Its Codex
+manifest loads the bundled skills and connects to Exa's hosted MCP server.
+
+Install Exa directly from the shared ChatGPT/Codex plugin directory at
+[chatgpt.com/plugins/exa](https://chatgpt.com/plugins/exa?open_in_app), or add
+this repository to a local Codex marketplace and install
+`agents-ai-nextjs-bridge`. Start a new Codex session after installation so its
+skills and MCP tools are loaded.
+
+For a manual MCP-only setup, use:
+
+```bash
+codex mcp add exa --url https://mcp.exa.ai/mcp
+```
+
+The hosted server prompts for Exa authorization when needed. If you build
+against the Exa API or SDK directly, provide `EXA_API_KEY` through the
+environment; never place it in this repository.
 
 ## Why this exists
 
