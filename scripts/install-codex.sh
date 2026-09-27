@@ -2,81 +2,130 @@
 set -eu
 
 PLUGIN_NAME=agents-ai-nextjs-bridge
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-PLUGIN_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
-PLUGIN_DIR=${CODEX_PLUGIN_DIR:-"$HOME/plugins/$PLUGIN_NAME"}
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+PLUGIN_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd -P)
 MARKETPLACE=${CODEX_MARKETPLACE_PATH:-"$HOME/.agents/plugins/marketplace.json"}
 
-mkdir -p "$(dirname -- "$PLUGIN_DIR")" "$(dirname -- "$MARKETPLACE")"
+case "$MARKETPLACE" in
+  */.agents/plugins/marketplace.json) ;;
+  *)
+    echo "CODEX_MARKETPLACE_PATH must be an absolute path ending in /.agents/plugins/marketplace.json." >&2
+    exit 1
+    ;;
+esac
+
+MARKETPLACE_DIR=$(dirname -- "$MARKETPLACE")
+mkdir -p "$MARKETPLACE_DIR"
+MARKETPLACE_DIR=$(CDPATH= cd -- "$MARKETPLACE_DIR" && pwd -P)
+MARKETPLACE="$MARKETPLACE_DIR/marketplace.json"
+MARKETPLACE_ROOT=$(CDPATH= cd -- "$MARKETPLACE_DIR/../.." && pwd -P)
+PLUGIN_DIR=${CODEX_PLUGIN_DIR:-"$MARKETPLACE_ROOT/plugins/$PLUGIN_NAME"}
+PLUGIN_DIR=$(node -e 'process.stdout.write(require("node:path").resolve(process.argv[1]))' "$PLUGIN_DIR")
+
+MARKETPLACE_PLUGIN_PATH=$(node - "$MARKETPLACE_ROOT" "$PLUGIN_DIR" <<'NODE'
+const path = require('node:path');
+const marketplaceRoot = path.resolve(process.argv[2]);
+const pluginDir = path.resolve(process.argv[3]);
+const relative = path.relative(marketplaceRoot, pluginDir);
+
+if (!relative || relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) {
+  console.error('CODEX_PLUGIN_DIR must be inside the marketplace root (' + marketplaceRoot + '): ' + pluginDir);
+  process.exit(1);
+}
+
+process.stdout.write('./' + relative.split(path.sep).join('/'));
+NODE
+)
+
+mkdir -p "$(dirname -- "$PLUGIN_DIR")"
 
 if [ -L "$PLUGIN_DIR" ]; then
-  current=$(CDPATH= cd -- "$PLUGIN_DIR" && pwd -P)
+  if ! current=$(CDPATH= cd -- "$PLUGIN_DIR" 2>/dev/null && pwd -P); then
+    echo "Refusing to use broken symlink: $PLUGIN_DIR" >&2
+    exit 1
+  fi
   if [ "$current" != "$PLUGIN_ROOT" ]; then
     echo "Refusing to replace $PLUGIN_DIR (it points to $current)." >&2
     exit 1
   fi
 elif [ -e "$PLUGIN_DIR" ]; then
-  echo "Refusing to replace existing path: $PLUGIN_DIR" >&2
-  exit 1
+  if [ ! -d "$PLUGIN_DIR" ]; then
+    echo "Refusing to replace existing path: $PLUGIN_DIR" >&2
+    exit 1
+  fi
+  current=$(CDPATH= cd -- "$PLUGIN_DIR" && pwd -P)
+  if [ "$current" != "$PLUGIN_ROOT" ]; then
+    echo "Refusing to replace existing directory: $PLUGIN_DIR (it resolves to $current)." >&2
+    exit 1
+  fi
 else
   ln -s "$PLUGIN_ROOT" "$PLUGIN_DIR"
 fi
 
-python3 - "$MARKETPLACE" "$PLUGIN_NAME" <<'PY'
-import json
-import os
-import sys
-import tempfile
-from pathlib import Path
+encoded_marketplace=$(node - "$MARKETPLACE" "$PLUGIN_NAME" "$MARKETPLACE_PLUGIN_PATH" <<'NODE'
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-marketplace = Path(sys.argv[1])
-plugin_name = sys.argv[2]
+async function main() {
+  const marketplace = path.resolve(process.argv[2]);
+  const pluginName = process.argv[3];
+  const pluginPath = process.argv[4];
+  let data;
 
-if marketplace.exists():
-    data = json.loads(marketplace.read_text(encoding="utf-8"))
-else:
+  try {
+    data = JSON.parse(await fs.readFile(marketplace, 'utf8'));
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
     data = {
-        "name": "personal",
-        "interface": {"displayName": "Personal"},
-        "plugins": [],
-    }
+      name: 'personal',
+      interface: { displayName: 'Personal' },
+      plugins: [],
+    };
+  }
 
-plugins = data.setdefault("plugins", [])
-entry = {
-    "name": plugin_name,
-    "source": {"source": "local", "path": f"./plugins/{plugin_name}"},
-    "policy": {
-        "installation": "INSTALLED_BY_DEFAULT",
-        "authentication": "ON_INSTALL",
+  if (!data || Array.isArray(data) || typeof data !== 'object') {
+    throw new Error('Marketplace file must contain a JSON object.');
+  }
+  if (data.plugins === undefined) data.plugins = [];
+  if (!Array.isArray(data.plugins)) {
+    throw new Error('Marketplace plugins property must be an array.');
+  }
+
+  const entry = {
+    name: pluginName,
+    source: { source: 'local', path: pluginPath },
+    policy: {
+      installation: 'INSTALLED_BY_DEFAULT',
+      authentication: 'ON_INSTALL',
     },
-    "category": "Developer Tools",
+    category: 'Developer Tools',
+  };
+  const index = data.plugins.findIndex((existing) => existing && existing.name === pluginName);
+  if (index === -1) data.plugins.push(entry);
+  else data.plugins[index] = entry;
+
+  const temporary = path.join(path.dirname(marketplace), 'marketplace-' + process.pid + '.tmp');
+  const file = await fs.open(temporary, 'wx', 0o600);
+  try {
+    await file.writeFile(JSON.stringify(data, null, 2) + '\n', 'utf8');
+  } finally {
+    await file.close();
+  }
+  try {
+    await fs.rename(temporary, marketplace);
+  } catch (error) {
+    await fs.unlink(temporary).catch(() => {});
+    throw error;
+  }
+
+  process.stdout.write(encodeURIComponent(marketplace));
 }
 
-for index, existing in enumerate(plugins):
-    if existing.get("name") == plugin_name:
-        plugins[index] = entry
-        break
-else:
-    plugins.append(entry)
-
-fd, temporary = tempfile.mkstemp(prefix="marketplace-", suffix=".json", dir=marketplace.parent)
-try:
-    with os.fdopen(fd, "w", encoding="utf-8") as stream:
-        json.dump(data, stream, indent=2)
-        stream.write("\n")
-    os.replace(temporary, marketplace)
-finally:
-    if os.path.exists(temporary):
-        os.unlink(temporary)
-PY
-
-encoded_marketplace=$(python3 - "$MARKETPLACE" <<'PY'
-import sys
-from pathlib import Path
-from urllib.parse import quote
-
-print(quote(str(Path(sys.argv[1]).expanduser().resolve()), safe=""))
-PY
+main().catch((error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});
+NODE
 )
 
 echo "Installed $PLUGIN_NAME from $PLUGIN_ROOT"
