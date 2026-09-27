@@ -28,6 +28,12 @@ another machine's path (for example `/root/.agents/...`) cannot locate your
 local marketplace. Start a new Codex session after installation so its skills
 and MCP tools are loaded.
 
+For a custom marketplace, set `CODEX_MARKETPLACE_PATH` to an absolute
+`<root>/.agents/plugins/marketplace.json` path. By default, the plugin is
+placed in `<root>/plugins/agents-ai-nextjs-bridge`; `CODEX_PLUGIN_DIR` can
+choose another location inside that same root. The installer writes the
+matching relative source path and requires Node.js 18+; Python is not needed.
+
 If an app deep link does not open, use these portable links instead:
 
 - [View the plugin source on GitHub](https://github.com/thanabartbb/main)
