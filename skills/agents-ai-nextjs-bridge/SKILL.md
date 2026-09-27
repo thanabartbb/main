@@ -38,8 +38,10 @@ Prefer the MCP tool `setup_vercel_plugin` (dry run first, then `confirm: true`).
 
 Requirements: Node.js 18+ (Bun optional, used by some plugin tooling; it has
 no official Android build, so it is usually absent on Termux). The MCP `doctor`
-tool (or `"${CLAUDE_PLUGIN_ROOT}"/scripts/doctor.sh` as a fallback) checks both,
-plus git and write access to the current directory, in one pass.
+tool checks both, plus git and write access to the current directory, in one
+pass. In Codex, use the bundled `agents-ai-nextjs-bridge` MCP server. The
+`"${CLAUDE_PLUGIN_ROOT}"/scripts/doctor.sh` fallback is for Claude Code only;
+do not expand that Claude-specific placeholder in Codex.
 
 ## Commands
 - `/setup` — verify prerequisites and install the canonical Vercel plugin.
