@@ -7,7 +7,7 @@
   "scripts": {
     "install:codex": "sh scripts/install-codex.sh",
     "start": "node server/index.mjs",
-    "test": "node --test test/server.test.mjs"
+    "test": "node --test test/server.test.mjs test/install-codex.test.mjs"
   },
   "engines": { "node": ">=18" },
   "license": "MIT"
