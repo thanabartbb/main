@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "exa": {
+      "type": "http",
+      "url": "https://mcp.exa.ai/mcp"
+    },
+    "agents-ai-nextjs-bridge": {
+      "command": "node",
+      "args": ["server/index.mjs"],
+      "cwd": "."
+    }
+  }
+}
